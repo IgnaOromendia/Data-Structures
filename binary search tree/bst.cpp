@@ -16,7 +16,7 @@ void bst<T>::insert(const T &elem) {
         } else {
             insert_aux(_root, elem);
         }
-    }
+    } 
     _size++;
 }
 

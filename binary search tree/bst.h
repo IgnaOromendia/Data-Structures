@@ -38,7 +38,7 @@ private:
     Node* _root;
     int _size;
 
-    void destroy(Node* n);
+    void destroy(Node* n); 
     void insert_aux(Node* n, T& elem);
     void remove_aux(Node* n, T& elem);
     Node* search(Node* n, T& elem);
