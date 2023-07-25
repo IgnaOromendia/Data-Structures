@@ -26,13 +26,6 @@ public:
 
     const int size() const;
 
-    void print(ostream& os) const;
-
-    friend ostream& operator<<(ostream& os, bst<T>& b) {
-        b.print(os);
-        return os;
-    }
-
 private:
 
     struct Node {
@@ -40,10 +33,17 @@ private:
         T value;
         Node* left;
         Node* right;
-    }
+    };
 
     Node* _root;
-    int _length;
+    int _size;
+
+    void destroy(Node* n);
+    void insert_aux(Node* n, T& elem);
+    void remove_aux(Node* n, T& elem);
+    Node* search(Node* n, T& elem);
+    Node* search_father(Node* n, T& elem);
+    bool isLeaf(Node* n);
 };
 
 #endif
