@@ -1,4 +1,6 @@
 .DS_Store
 .vscode
 linked\ list/tests
+binary\ search\ tree/tests
+binary\ search\ tree/*.dSYM
 Experimentation/inputs
