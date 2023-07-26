@@ -130,6 +130,30 @@ void test_copy_contructor() {
     print_judge("Copy constructor", answer);
 }
 
+void test_merge() {
+    bool answer = true;
+    List<int> l1;
+    List<int> l2;
+    l1.push_back(1);
+    l1.push_back(2);
+    l1.push_back(3);
+    l1.push_back(4);
+    l2.push_back(5);
+    l2.push_back(6);
+    l2.push_back(7);
+    l2.push_back(8);
+    l1.merge(l2);
+    if(l1.length() != 8) answer = false;
+    if(l2.length() != 4) answer = false;
+    for(int i = 0; i < l1.length(); i++) {
+        if(l1[i] != i+1) answer = false;
+    }
+    for(int i = 0; i < l2.length(); i++) {
+        if(l2[i] != i+5) answer = false;
+    }
+    print_judge("Merge", answer);
+}
+
 int main() {
     test_empty_constructor();
     test_push_front();
@@ -139,4 +163,5 @@ int main() {
     test_some_push_front_and_back();
     test_remove_elements();
     test_copy_contructor();
+    test_merge();
 }

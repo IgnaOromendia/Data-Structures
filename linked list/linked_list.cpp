@@ -116,6 +116,13 @@ void List<T>::remove(T elem){
 template <typename T>
 int List<T>::length() const {
     return _length;
+}
+
+template <typename T>
+void List<T>::merge(const List<T>& l){
+    for(int i = 0; i < l._length; i++) {
+        push_back(l[i]);
+    }
 };
 
 template <typename T>

@@ -29,6 +29,8 @@ public:
 
     int length() const;
 
+    void merge(const List<T>& l);
+
     void print(ostream& os);
 
     friend ostream& operator<<(ostream& os, List<T>& l) {
