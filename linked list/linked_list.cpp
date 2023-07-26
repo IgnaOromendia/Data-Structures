@@ -31,8 +31,15 @@ template <typename T>
 const T &List<T>::operator[](int i) const{
     Node* it = _first;
     if (i < _length) {
-        for(int j = 0; j < i; j++) {
-            it = it->next;
+        if (i > _length / 2) {
+            it = _last;
+            for(int j = _length - 1; j > i; j--) {
+                it = it->prev;
+            }
+        } else {
+            for(int j = 0; j < i; j++) {
+                it = it->next;
+            }
         }
     }
     return it->value;
