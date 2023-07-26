@@ -9,19 +9,6 @@
 
 using namespace std;
 
-vector<int> test;
-
-void read_input(string filepath, List<int>& l) {
-    int number;
-    ifstream inputFile;
-    inputFile.open(filepath);
-    while (inputFile) {
-        inputFile >> number;
-        l.push_back(number);
-    }
-    inputFile.close();
-}
-
 void writeData(long long d, int t, string filename) {
     ofstream outputFile;
     outputFile.open(filename,ios::app);
@@ -95,6 +82,46 @@ void sample_insertion() {
     }
 }
 
-int main() {
+void sample_access() {
+    int n = 10000000;
+    int j = 0;
+    List<int> my_list;
+    list<int> cpp_list;
+    int step = 500000;
     
+    while(j <= n) {
+        my_list.push_back(j);
+        //cpp_list.push_back(j);
+        j++;
+    }
+
+    cout << "Testing with size: " << n << endl;
+    cout << "Double linked list" << endl;
+
+    j = 0;
+    while (j <= n) {
+        auto start = chrono::high_resolution_clock::now();
+        my_list[j];
+        auto stop = chrono::high_resolution_clock::now();
+        auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+        writeData(duration.count(),j,"samples/access_linked_list_opt.csv");
+        j += step;
+    }
+
+    cout << "C++ List" << endl;
+    //j = 0;
+    while (j <= n) {
+        auto start = chrono::high_resolution_clock::now();
+        auto it = cpp_list.begin();
+        advance(it, j);
+        auto stop = chrono::high_resolution_clock::now();
+        auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+        writeData(duration.count(),j,"../samples_cpp/access_list.csv");
+        j += step;
+    }
+}
+
+int main() {
+    sample_access();
+    return 0;
 }
