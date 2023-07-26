@@ -41,14 +41,13 @@ const T &List<T>::operator[](int i) const{
 template <typename T>
 void List<T>::push_front(const T& elem){
     Node* new_node = new Node(elem);
+    new_node->next = _first;
     if(_length > 0) {
         _first->prev = new_node;
-        new_node->next = _first; 
-        _first = new_node;      
     } else {
-        _first = new_node;
         _last = new_node;
     }
+    _first = new_node;
     _length++;
 }
 
@@ -106,6 +105,7 @@ void List<T>::remove(T elem){
         this->remove_at(i);
     }
 }
+
 template <typename T>
 int List<T>::length() const {
     return _length;
