@@ -5,7 +5,7 @@
 using namespace std;
 
 string accepted = "accpeted";
-string wrong    = "wrong anwser";
+string wrong    = "wrong answer";
 int testCases   = 0;
 int acceptedC   = 0;
 
@@ -41,21 +41,21 @@ void test_some_inserts() {
 }
 
 void test_contains() {
-    bool anwser = true;
+    bool answer = true;
     bst<int> a;
 
     for (int i = 0; i < 0;i++) {
-        if (a.contains(i)) anwser = false;
+        if (a.contains(i)) answer = false;
     }
 
     a.insert(10);
-    if (!a.contains(10)) anwser = false;
+    if (!a.contains(10)) answer = false;
 
     a.insert(88);
-    if (!a.contains(10)) anwser = false;
-    if (!a.contains(88)) anwser = false;
+    if (!a.contains(10)) answer = false;
+    if (!a.contains(88)) answer = false;
 
-    print_judge("Contains", anwser);
+    print_judge("Contains", answer);
 }
 
 void test_insert_remove() {
