@@ -29,7 +29,7 @@ public:
 private:
 
     struct Node {
-        Node(const T& value): value(v), left(nullptr), right(nullptr) {}
+        Node(const T& v): value(v), left(nullptr), right(nullptr) {}
         T value;
         Node* left;
         Node* right;
@@ -39,10 +39,10 @@ private:
     int _size;
 
     void destroy(Node* n); 
-    void insert_aux(Node* n, T& elem);
-    void remove_aux(Node* n, T& elem);
-    Node* search(Node* n, T& elem);
-    Node* search_father(Node* n, T& elem);
+    void insert_aux(Node* n, const T& elem);
+    void remove_aux(Node* n, const T& elem);
+    Node* search(Node* n, const T& elem) const;
+    Node* search_father(Node* n, const T& elem) const;
     bool isLeaf(Node* n);
 };
 
