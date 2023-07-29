@@ -22,7 +22,7 @@ public:
 
 private:
     struct Node {
-        Node(const T& v): value(v), left(nullptr), right(nullptr), subtree_size(0) {}
+        Node(const T& v): value(v), left(nullptr), right(nullptr), subtree_size(1) {}
         T value;
         Node* left;
         Node* right;
@@ -38,6 +38,7 @@ private:
     void insert_root(Node*& n,const T& elem);
     void insert_aux(Node*& n, const T& elem);
     pair<Node*, Node*> split(Node* n, const T& elem, Node* smaller, Node* greater);
+    void update_subtree_size(Node*& n);
 };
 
 template <typename T>

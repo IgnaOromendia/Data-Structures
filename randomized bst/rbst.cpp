@@ -70,6 +70,7 @@ void rbst<T>::insert_root(Node*& n, const T &elem) {
     n = new_node;
     new_node->left  = pair.first;
     new_node->right = pair.second;
+    update_subtree_size(new_node);
 }
 
 template <typename T>
@@ -78,16 +79,18 @@ void rbst<T>::insert_aux(rbst::Node*& n, const T &elem) {
     if (elem < n->value) {
         if (n->left == nullptr) {
             n->left = new Node(elem);
-            //n->subtree_size++;
+            n->subtree_size++;
         } else {
             insert_aux(n->left, elem);
+            update_subtree_size(n);
         }
     } else {
         if (n->right == nullptr) {
             n->right = new Node(elem);
-            //n->subtree_size++;
+            n->subtree_size++;
         } else {
             insert_aux(n->right, elem);
+            update_subtree_size(n);
         }
     }
 }
@@ -100,7 +103,7 @@ split_pair<T> rbst<T>::split(Node *n, const T &elem, Node *smaller, Node *greate
         if (smaller != nullptr) {
             split_pair<T> pair = split(n->left, elem, smaller->left, smaller->right);
             n->left = pair.second;
-            // Update size
+            update_subtree_size(n);
             return make_pair(pair.first, n);
         } else {
             return make_pair(nullptr, n);
@@ -109,10 +112,18 @@ split_pair<T> rbst<T>::split(Node *n, const T &elem, Node *smaller, Node *greate
         if (greater != nullptr) {
             split_pair<T> pair = split(n->right, elem, greater->left, greater->right);
             n->right = pair.first;
-            // Update size
+            update_subtree_size(n);
             return make_pair(n, pair.second);
         } else {
             return make_pair(n, nullptr);
         }
     }
+}
+
+template <typename T>
+void rbst<T>::update_subtree_size(Node *&n) {
+    int subt_s = 1;
+    if (n->left != nullptr) subt_s += n->left->subtree_size;
+    if (n->right != nullptr) subt_s += n->right->subtree_size;
+    n->subtree_size = subt_s;
 }
