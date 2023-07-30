@@ -20,6 +20,10 @@ public:
 
     const int size() const;
 
+    const T& min() const;
+
+    const T& max() const;
+
 private:
     struct Node {
         Node(const T& v): value(v), left(nullptr), right(nullptr), subtree_size(1) {}

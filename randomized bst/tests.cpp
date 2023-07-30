@@ -107,6 +107,32 @@ void test_some_removes() {
     print_judge("Some removes", answer);
 }
 
+void test_min() {
+    bool answer = true;
+    rbst<int> a;
+    a.insert(23);
+    a.insert(21);
+    a.insert(58);
+    a.insert(152);
+    if(a.min() != 21) answer = false;
+    print_judge("Min", answer);
+}
+
+void test_max() {
+    bool answer = true;
+    rbst<int> a;
+    a.insert(1);
+    a.insert(21);
+    a.insert(58);
+    a.insert(152);
+    if (!a.contains(1)) answer = false;
+    if (!a.contains(21)) answer = false;
+    if (!a.contains(58)) answer = false;
+    if (!a.contains(152)) answer = false;
+    if(a.max() != 152) answer = false;
+    print_judge("Max", answer);
+}
+
 
 int main() {
     test_empty_constructor();
@@ -114,6 +140,8 @@ int main() {
     test_some_inserts();
     test_one_remove();
     test_some_removes();
+    test_min();
+    test_max();
     cout << "Total accepted: " << acceptedC << "/" << testCases << endl;
     return 0;
 }

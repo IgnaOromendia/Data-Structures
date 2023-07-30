@@ -44,6 +44,20 @@ const int rbst<T>::size() const {
     return _size;
 }
 
+template <typename T>
+const T& rbst<T>::min() const {
+    Node* it = _root;
+    while(it->left != nullptr) it = it->left;
+    return it->value;
+}
+
+template <typename T>
+const T& rbst<T>::max() const {
+    Node* it = _root;
+    while(it->right != nullptr) {it = it->right;}
+    return it->value;
+}
+
 // AUXILIARS
 
 template <typename T>
