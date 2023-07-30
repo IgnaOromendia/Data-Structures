@@ -33,7 +33,11 @@ void rbst<T>::remove(const T &elem) {
             _root = nullptr;
             _size = 0;
         }  else {
-            remove_aux(_root, elem);
+            if (elem == _root->value) {
+                _root = remove_aux(_root, elem);
+            } else {
+                remove_aux(_root, elem);
+            }
             _size--;
         }
     }
@@ -56,6 +60,11 @@ const T& rbst<T>::max() const {
     Node* it = _root;
     while(it->right != nullptr) {it = it->right;}
     return it->value;
+}
+
+template <typename T>
+const T &rbst<T>::root() const {
+    return _root->value;
 }
 
 // AUXILIARS
@@ -156,7 +165,7 @@ template <typename T>
 typename rbst<T>::Node* rbst<T>::remove_aux(Node *n, const T &elem) {
     if (n == nullptr) return nullptr;
     if (n->value == elem) {
-        n = remove_root(n); 
+        n = join(n->left, n->right);
         update_subtree_size(n);
         return n;
     }
@@ -169,10 +178,6 @@ typename rbst<T>::Node* rbst<T>::remove_aux(Node *n, const T &elem) {
     return n;
 }
 
-template <typename T>
-typename rbst<T>::Node* rbst<T>::remove_root(Node*& n) {
-    return join(n->left, n->right);
-}
 
 template <typename T>
 typename rbst<T>::Node* rbst<T>::join(Node *&n1, Node *&n2) {
@@ -180,14 +185,15 @@ typename rbst<T>::Node* rbst<T>::join(Node *&n1, Node *&n2) {
     if (n1 == nullptr) return n2;
     if (n2 == nullptr) return n1;
 
-    double p = 1.0 / (n1->subtree_size + n2->subtree_size);
-    double x = real_random();
+    int m = n2->subtree_size;
+    int n = n1->subtree_size;
+    double x = uniform_number(n + m);
 
-    if (p < x) {
+    if (x < m) {    // p = m / (n + m)
         n1->right = join(n1->right, n2);
         update_subtree_size(n1);
         return n1;
-    } else {
+    } else {        // p = n / (n + m)
         n2->left = join(n1, n2->left);
         update_subtree_size(n2);
         return n2;

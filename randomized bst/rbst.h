@@ -24,6 +24,9 @@ public:
 
     const T& max() const;
 
+    const T& root() const;
+
+
 private:
     struct Node {
         Node(const T& v): value(v), left(nullptr), right(nullptr), subtree_size(1) {}
@@ -59,9 +62,6 @@ private:
 
     // Recursive deletion
     Node* remove_aux(Node* n, const T& elem);
-
-    // Remove root
-    Node* remove_root(Node*& n);
 
     // Joint two trees
     Node* join(Node*& n1, Node*& n2);
