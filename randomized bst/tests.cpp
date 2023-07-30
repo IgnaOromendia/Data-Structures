@@ -71,37 +71,54 @@ void test_one_remove() {
     print_judge("One remove",answer);
 }
 
-void test_root() {
-    bool answer = true;
+// void test_root() { test that cannot be done because root function must be private, this test was done to test deletion
+//     bool answer = true;
+//     rbst<int> r;
+
+//     r.insert(14);
+//     r.insert(5);
+//     r.insert(10);
+//     r.insert(15);
+//     r.insert(18);
+//     r.insert(28);
+//     r.insert(25);
+//     r.insert(33);
+//     r.insert(30);
+
+//     while (r.size() > 0) {
+//         int root = r.root();
+//         r.remove(root);
+//     }
+
+//     if (r.size() != 0) answer = false;
+//     if (r.contains(14)) answer = false;
+//     if (r.contains(5)) answer = false;
+//     if (r.contains(10)) answer = false;
+//     if (r.contains(15)) answer = false;
+//     if (r.contains(18)) answer = false;
+//     if (r.contains(28)) answer = false;
+//     if (r.contains(25)) answer = false;
+//     if (r.contains(33)) answer = false;
+//     if (r.contains(30)) answer = false;
+
+//     print_judge("Root", answer);
+// }
+
+void test_sorted_insert() {
+    bool anwser = true;
     rbst<int> r;
 
-    r.insert(14);
-    r.insert(5);
-    r.insert(10);
-    r.insert(15);
-    r.insert(18);
-    r.insert(28);
-    r.insert(25);
-    r.insert(33);
-    r.insert(30);
-
-    while (r.size() > 0) {
-        int root = r.root();
-        r.remove(root);
+    for (int i = 0; i < 100; i++) {
+        r.insert(i);
     }
 
-    if (r.size() != 0) answer = false;
-    if (r.contains(14)) answer = false;
-    if (r.contains(5)) answer = false;
-    if (r.contains(10)) answer = false;
-    if (r.contains(15)) answer = false;
-    if (r.contains(18)) answer = false;
-    if (r.contains(28)) answer = false;
-    if (r.contains(25)) answer = false;
-    if (r.contains(33)) answer = false;
-    if (r.contains(30)) answer = false;
+    for (int i = 0; i < 100; i++) {
+        if (!r.contains(i)) anwser = false;
+    }
 
-    print_judge("Root", answer);
+    if (r.size() != 100) anwser = false;
+
+    print_judge("Sorted insert", anwser);
 }
 
 void test_some_removes() {
@@ -260,7 +277,7 @@ int main() {
     test_one_insert();
     test_some_inserts();
     test_one_remove();
-    test_root();
+    test_sorted_insert();
     test_some_removes();
     test_min();
     test_max();

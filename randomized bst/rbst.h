@@ -24,9 +24,6 @@ public:
 
     const T& max() const;
 
-    const T& root() const;
-
-
 private:
     struct Node {
         Node(const T& v): value(v), left(nullptr), right(nullptr), subtree_size(1) {}
@@ -65,9 +62,6 @@ private:
 
     // Joint two trees
     Node* join(Node*& n1, Node*& n2);
-
-    // A real random number between 0 and 1
-    double real_random();
 };
 
 template <typename T>

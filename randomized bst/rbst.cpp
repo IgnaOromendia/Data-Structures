@@ -62,11 +62,6 @@ const T& rbst<T>::max() const {
     return it->value;
 }
 
-template <typename T>
-const T &rbst<T>::root() const {
-    return _root->value;
-}
-
 // AUXILIARS
 
 template <typename T>
@@ -198,12 +193,4 @@ typename rbst<T>::Node* rbst<T>::join(Node *&n1, Node *&n2) {
         update_subtree_size(n2);
         return n2;
     }
-}
-
-template <typename T>
-double rbst<T>::real_random() {
-    random_device rd;
-    mt19937 generator(rd());
-    uniform_real_distribution<double> distribution(0.0, 1.0);
-    return distribution(generator);
 }
