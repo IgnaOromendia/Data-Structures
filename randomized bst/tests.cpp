@@ -58,13 +58,62 @@ void test_some_inserts() {
     if (!r.contains(33)) answer = false;
     if (!r.contains(30)) answer = false;
     
-    print_judge("Some inserts and contains", answer);
+    print_judge("Some inserts", answer);
 }
+
+void test_one_remove() {
+    bool answer = true;
+    rbst<int> r;
+    r.insert(10);
+    r.remove(10);
+    if (r.size() != 0) answer = false;
+    if (r.contains(10)) answer = false;
+    print_judge("One remove",answer);
+}
+
+void test_some_removes() {
+    bool answer = true;
+    rbst<int> r;
+
+    for (int i = 0; i < 10; i++) {
+        if (r.contains(i)) answer = false;
+    }
+
+    r.insert(14);
+    r.insert(5);
+    r.insert(10);
+    r.insert(15);
+    r.insert(18);
+    r.insert(28);
+    r.insert(25);
+    r.insert(33);
+    r.insert(30);
+
+    r.remove(28);
+    r.remove(5);
+    r.remove(15);
+
+    if (r.size() != 6) answer = false;
+    if (!r.contains(14)) answer = false;
+    if (r.contains(5)) answer = false;
+    if (!r.contains(10)) answer = false;
+    if (r.contains(15)) answer = false;
+    if (!r.contains(18)) answer = false;
+    if (r.contains(28)) answer = false;
+    if (!r.contains(25)) answer = false;
+    if (!r.contains(33)) answer = false;
+    if (!r.contains(30)) answer = false;
+    
+    print_judge("Some removes", answer);
+}
+
 
 int main() {
     test_empty_constructor();
     test_one_insert();
     test_some_inserts();
+    test_one_remove();
+    test_some_removes();
     cout << "Total accepted: " << acceptedC << "/" << testCases << endl;
     return 0;
 }

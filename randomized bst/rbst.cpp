@@ -27,7 +27,16 @@ void rbst<T>::insert(const T &elem) {
 
 template <typename T>
 void rbst<T>::remove(const T &elem) {
-    
+    if (contains(elem)) {
+        if (_size == 1) {
+            delete _root;
+            _root = nullptr;
+            _size = 0;
+        }  else {
+            remove_aux(_root, elem);
+            _size--;
+        }
+    }
 }
 
 template <typename T>
@@ -54,7 +63,7 @@ typename rbst<T>::Node* rbst<T>::search(rbst::Node* n, const T& elem) const {
 }
 
 template <typename T>
-double rbst<T>::uniform_number(const int l) {
+int rbst<T>::uniform_number(const int l) {
     random_device rd;
     mt19937 generator(rd());
     uniform_int_distribution<int> distribution(0, l);
@@ -62,20 +71,8 @@ double rbst<T>::uniform_number(const int l) {
 }
 
 template <typename T>
-void rbst<T>::insert_root(Node*& n, const T &elem) {
-    Node* new_node = new Node(elem);
-
-    split_pair<T> pair = split(n, elem, n->left, n->right);
-
-    n = new_node;
-    new_node->left  = pair.first;
-    new_node->right = pair.second;
-    update_subtree_size(new_node);
-}
-
-template <typename T>
 void rbst<T>::insert_aux(rbst::Node*& n, const T &elem) {
-    if (uniform_number(_size) == 0) return insert_root(n, elem);
+    if (uniform_number(n->subtree_size) == 0) return insert_root(n, elem);
     if (elem < n->value) {
         if (n->left == nullptr) {
             n->left = new Node(elem);
@@ -95,7 +92,18 @@ void rbst<T>::insert_aux(rbst::Node*& n, const T &elem) {
     }
 }
 
-// TODO: Devolver smaller and greater
+template <typename T>
+void rbst<T>::insert_root(Node*& n, const T &elem) {
+    Node* new_node = new Node(elem);
+
+    split_pair<T> pair = split(n, elem, n->left, n->right);
+
+    n = new_node;
+    new_node->left  = pair.first;
+    new_node->right = pair.second;
+    update_subtree_size(new_node);
+}
+
 template <typename T>
 split_pair<T> rbst<T>::split(Node *n, const T &elem, Node *smaller, Node *greater) {
     if (n == nullptr) return make_pair(nullptr, nullptr);
@@ -122,8 +130,60 @@ split_pair<T> rbst<T>::split(Node *n, const T &elem, Node *smaller, Node *greate
 
 template <typename T>
 void rbst<T>::update_subtree_size(Node *&n) {
-    int subt_s = 1;
-    if (n->left != nullptr) subt_s += n->left->subtree_size;
-    if (n->right != nullptr) subt_s += n->right->subtree_size;
-    n->subtree_size = subt_s;
+    if (n != nullptr) {
+        int subt_s = 1;
+        if (n->left != nullptr) subt_s += n->left->subtree_size;
+        if (n->right != nullptr) subt_s += n->right->subtree_size;
+        n->subtree_size = subt_s;
+    }
+}
+
+template <typename T>
+typename rbst<T>::Node* rbst<T>::remove_aux(Node *n, const T &elem) {
+    if (n == nullptr) return nullptr;
+    if (n->value == elem) {
+        n = remove_root(n); 
+        update_subtree_size(n);
+        return n;
+    }
+    if (elem < n->value) {
+        n->left = remove_aux(n->left, elem);
+    } else {
+        n->right = remove_aux(n->right, elem);
+    }
+    update_subtree_size(n);
+    return n;
+}
+
+template <typename T>
+typename rbst<T>::Node* rbst<T>::remove_root(Node*& n) {
+    return join(n->left, n->right);
+}
+
+template <typename T>
+typename rbst<T>::Node* rbst<T>::join(Node *&n1, Node *&n2) {
+    if (n1 == nullptr and n2 == nullptr) return nullptr;
+    if (n1 == nullptr) return n2;
+    if (n2 == nullptr) return n1;
+
+    double p = 1.0 / (n1->subtree_size + n2->subtree_size);
+    double x = real_random();
+
+    if (p < x) {
+        n1->right = join(n1->right, n2);
+        update_subtree_size(n1);
+        return n1;
+    } else {
+        n2->left = join(n1, n2->left);
+        update_subtree_size(n2);
+        return n2;
+    }
+}
+
+template <typename T>
+double rbst<T>::real_random() {
+    random_device rd;
+    mt19937 generator(rd());
+    uniform_real_distribution<double> distribution(0.0, 1.0);
+    return distribution(generator);
 }

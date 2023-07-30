@@ -32,13 +32,38 @@ private:
     Node* _root;
     int _size;
 
+    // Destroy all the nodes
     void destroy(Node* n);
+
+    // Search and return a node
     Node* search(Node* n, const T& elem) const;
-    double uniform_number(const int l);
-    void insert_root(Node*& n,const T& elem);
+
+    // A random number with uniform distribution between 0 and l
+    int uniform_number(const int l);
+
+    // Recursive insertion
     void insert_aux(Node*& n, const T& elem);
+
+    // Insert the node in the root
+    void insert_root(Node*& n,const T& elem);
+
+    // Split the tree
     pair<Node*, Node*> split(Node* n, const T& elem, Node* smaller, Node* greater);
+
+    // Update the subtree size of n
     void update_subtree_size(Node*& n);
+
+    // Recursive deletion
+    Node* remove_aux(Node* n, const T& elem);
+
+    // Remove root
+    Node* remove_root(Node*& n);
+
+    // Joint two trees
+    Node* join(Node*& n1, Node*& n2);
+
+    // A real random number between 0 and 1
+    double real_random();
 };
 
 template <typename T>
