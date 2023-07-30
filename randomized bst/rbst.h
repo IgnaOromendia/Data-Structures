@@ -64,7 +64,4 @@ private:
     Node* join(Node*& n1, Node*& n2);
 };
 
-template <typename T>
-using split_pair = pair<typename rbst<T>::Node*, typename rbst<T>::Node*>;
-
 #endif
