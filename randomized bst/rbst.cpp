@@ -114,7 +114,7 @@ template <typename T>
 void rbst<T>::insert_root(Node*& n, const T &elem) {
     Node* new_node = new Node(elem);
 
-    pair<typename rbst<T>::Node*, typename rbst<T>::Node*> pair = split(n, elem, n->left, n->right);
+    split_pair<T> pair = split(n, elem, n->left, n->right);
 
     n = new_node;
     new_node->left  = pair.first;
@@ -123,7 +123,7 @@ void rbst<T>::insert_root(Node*& n, const T &elem) {
 }
 
 template <typename T>
-pair<typename rbst<T>::Node*, typename rbst<T>::Node*> rbst<T>::split(Node *n, const T &elem, Node *smaller, Node *greater) {
+split_pair<T> rbst<T>::split(Node *n, const T &elem, Node *smaller, Node *greater) {
     if (n == nullptr) return make_pair(nullptr, nullptr);
     if (elem < n->value) {
         if (smaller != nullptr) {
