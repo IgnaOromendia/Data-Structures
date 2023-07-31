@@ -82,15 +82,11 @@ void sample_insertion_random() {
     write_mean_time(times_rbst, "samples/rbst_insertion_random.csv");
 }
 
-void sample_insertion_sorted_and_max() {
+void sample_insertion_sorted() {
     cout << "Insertion sorted" << endl;
-    vector<vector<pair<int,long long> > > times_max_bst;
-    vector<vector<pair<int,long long> > > times_max_rbst;
     for (int q = 0; q < 5; q++) {
         vector<pair<int,long long> > sample_bst;
         vector<pair<int,long long> > sample_rbst;
-        vector<pair<int,long long> > sample_max_bst;
-        vector<pair<int,long long> > sample_max_rbst;
 
         cout << "--------------- Test " << q+1 << "---------------" << endl;
 
@@ -111,12 +107,6 @@ void sample_insertion_sorted_and_max() {
             auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
             sample_bst.push_back(make_pair(n,duration.count()));
 
-            start = chrono::high_resolution_clock::now();
-            int max1 = b.max();
-            stop = chrono::high_resolution_clock::now();
-            duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
-            sample_max_bst.push_back(make_pair(n,duration.count())); 
-
             j = 0;
             start = chrono::high_resolution_clock::now();
             while (j < n) {
@@ -126,26 +116,55 @@ void sample_insertion_sorted_and_max() {
             stop = chrono::high_resolution_clock::now();
             duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
             sample_rbst.push_back(make_pair(n,duration.count())); 
-
-            start = chrono::high_resolution_clock::now();
-            int max2 = r.max();
-            stop = chrono::high_resolution_clock::now();
-            duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
-            sample_max_rbst.push_back(make_pair(n,duration.count())); 
         }
         times_bst.push_back(sample_bst);
         times_rbst.push_back(sample_rbst);
-        
-        times_max_bst.push_back(sample_max_bst);
-        times_max_rbst.push_back(sample_max_rbst);
     }
-    write_mean_time(times_max_bst, "samples/bst_max_sorted.csv");
-    write_mean_time(times_max_rbst, "samples/rbst_max_sorted.csv");
     write_mean_time(times_bst, "samples/bst_insertion_sorted.csv");
     write_mean_time(times_rbst, "samples/rbst_insertion_sorted.csv");
 }
 
+void sample_max_sorted() {
+    cout << "Max sorted" << endl;
+    for (int q = 0; q < 5; q++) {
+        vector<pair<int,long long> > sample_bst;
+        vector<pair<int,long long> > sample_rbst;
+
+        cout << "--------------- Test " << q+1 << "---------------" << endl;
+
+        for (int i = 0; i < 9; i++) {
+            int n = 5000 + (2500 * i);
+            int j = 0;
+            bst<int> b;
+            rbst<int> r;
+
+            cout << "Test size: " << n << endl;
+
+            while (j < n) {
+                b.insert(j);
+                r.insert(j);
+                j++;
+            }
+
+            auto start = chrono::high_resolution_clock::now();
+            int max1 = b.max();
+            auto stop = chrono::high_resolution_clock::now();
+            auto duration1 = chrono::duration_cast<chrono::nanoseconds>(stop - start);
+            sample_bst.push_back(make_pair(n,duration1.count()));
+
+            start = chrono::high_resolution_clock::now();
+            int max2 = r.max();
+            stop = chrono::high_resolution_clock::now();
+            duration1 = chrono::duration_cast<chrono::nanoseconds>(stop - start);
+            sample_rbst.push_back(make_pair(n,duration1.count())); 
+        }
+        times_bst.push_back(sample_bst);
+        times_rbst.push_back(sample_rbst);
+    }
+    write_mean_time(times_bst, "samples/bst_max_sorted.csv");
+    write_mean_time(times_rbst, "samples/rbst_max_sorted.csv");
+}
 
 int main() {
-    sample_insertion_sorted_and_max();
+    sample_max_sorted();
 }
