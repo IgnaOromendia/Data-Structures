@@ -58,7 +58,7 @@ const T& rbst<T>::min() const {
 template <typename T>
 const T& rbst<T>::max() const {
     Node* it = _root;
-    while(it->right != nullptr) {it = it->right;}
+    while(it->right != nullptr) it = it->right;
     return it->value;
 }
 
@@ -90,7 +90,8 @@ int rbst<T>::uniform_number(const int l) {
 
 template <typename T>
 void rbst<T>::insert_aux(rbst::Node*& n, const T &elem) {
-    if (uniform_number(n->subtree_size) == 0) return insert_root(n, elem);
+    int N = n->subtree_size;
+    if (uniform_number(N) == N) return insert_root(n, elem);
     if (elem < n->value) {
         if (n->left == nullptr) {
             n->left = new Node(elem);
@@ -113,36 +114,32 @@ void rbst<T>::insert_aux(rbst::Node*& n, const T &elem) {
 template <typename T>
 void rbst<T>::insert_root(Node*& n, const T &elem) {
     Node* new_node = new Node(elem);
+    Node* S;
+    Node* G;
 
-    split_pair<T> pair = split(n, elem, n->left, n->right);
+    split(n, elem, S, G);
 
     n = new_node;
-    new_node->left  = pair.first;
-    new_node->right = pair.second;
+    new_node->left  = S;
+    new_node->right = G;
     update_subtree_size(new_node);
 }
 
 template <typename T>
-split_pair<T> rbst<T>::split(Node *n, const T &elem, Node *smaller, Node *greater) {
-    if (n == nullptr) return make_pair(nullptr, nullptr);
+void rbst<T>::split(Node *n, const T &elem, Node*& smaller, Node*& greater) {
+    if (n == nullptr) {
+        smaller = nullptr;
+        greater = nullptr;
+        return;
+    }
     if (elem < n->value) {
-        if (smaller != nullptr) {
-            split_pair<T> pair = split(n->left, elem, smaller->left, smaller->right);
-            n->left = pair.second;
-            update_subtree_size(n);
-            return make_pair(pair.first, n);
-        } else {
-            return make_pair(nullptr, n);
-        }
+        greater = n;
+        split(n->left, elem, smaller, greater->left);
+        update_subtree_size(n);
     } else {
-        if (greater != nullptr) {
-            split_pair<T> pair = split(n->right, elem, greater->left, greater->right);
-            n->right = pair.first;
-            update_subtree_size(n);
-            return make_pair(n, pair.second);
-        } else {
-            return make_pair(n, nullptr);
-        }
+        smaller = n;
+        split(n->right, elem, smaller->right, greater);
+        update_subtree_size(n);
     }
 }
 

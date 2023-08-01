@@ -52,7 +52,7 @@ private:
     void insert_root(Node*& n,const T& elem);
 
     // Split the tree
-    pair<Node*, Node*> split(Node* n, const T& elem, Node* smaller, Node* greater);
+    void split(Node* n, const T& elem, Node*& smaller, Node*& greater);
 
     // Update the subtree size of n
     void update_subtree_size(Node*& n);
@@ -63,8 +63,5 @@ private:
     // Joint two trees
     Node* join(Node*& n1, Node*& n2);
 };
-
-template <typename T>
-using split_pair = pair<typename rbst<T>::Node*, typename rbst<T>::Node*>;
 
 #endif
