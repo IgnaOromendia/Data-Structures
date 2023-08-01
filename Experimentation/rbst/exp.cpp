@@ -45,16 +45,16 @@ void sample_insertion_random() {
 
         cout << "--------------- Test " << q+1 << "---------------" << endl;
 
-        for (int i = 20; i <= 25; i++) {
-            int n = pow(2,i);
+        for (int i = 0; i < 10; i++) {
+            int n = 10000 + (2500 * i);
             int j = 0;
             bst<int> b;
             rbst<int> r;
             vector<int> rdata;
 
-            for(int k = 0; k < n; k++) rdata.push_back(key(i,n));
+            cout << "Test size: " << n << endl;
 
-            cout << "Test size: 2^" << i << endl;
+            for(int k = 0; k < n; k++) rdata.push_back(key(k,n));
 
             auto start = chrono::high_resolution_clock::now();
             while (j < n) {
@@ -63,7 +63,7 @@ void sample_insertion_random() {
             }
             auto stop = chrono::high_resolution_clock::now();
             auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
-            sample_bst.push_back(make_pair(i+1,duration.count()));
+            sample_bst.push_back(make_pair(n,duration.count()));
 
             j = 0;
             start = chrono::high_resolution_clock::now();
@@ -73,7 +73,7 @@ void sample_insertion_random() {
             }
             stop = chrono::high_resolution_clock::now();
             duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
-            sample_rbst.push_back(make_pair(i+1,duration.count())); 
+            sample_rbst.push_back(make_pair(n,duration.count())); 
         }
         times_bst.push_back(sample_bst);
         times_rbst.push_back(sample_rbst);
@@ -91,12 +91,14 @@ void sample_insertion_sorted() {
         cout << "--------------- Test " << q+1 << "---------------" << endl;
 
         for (int i = 0; i < 10; i++) {
-            int n = 1000 + (1000 * i);
+            int n = 10000 + (2500 * i);
             int j = 0;
             bst<int> b;
             rbst<int> r;
 
             cout << "Test size: " << n << endl;
+
+            cout << "Testing BST" << endl;
 
             auto start = chrono::high_resolution_clock::now();
             while (j < n) {
@@ -106,6 +108,8 @@ void sample_insertion_sorted() {
             auto stop = chrono::high_resolution_clock::now();
             auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
             sample_bst.push_back(make_pair(n,duration.count()));
+
+            cout << "Testing RBST" << endl;
 
             j = 0;
             start = chrono::high_resolution_clock::now();
@@ -124,25 +128,34 @@ void sample_insertion_sorted() {
     write_mean_time(times_rbst, "samples/rbst_insertion_sorted.csv");
 }
 
-void sample_max_sorted() {
-    cout << "Max sorted" << endl;
+void sample_max_random() {
+    cout << "Max random" << endl;
     for (int q = 0; q < 5; q++) {
         vector<pair<int,long long> > sample_bst;
         vector<pair<int,long long> > sample_rbst;
 
         cout << "--------------- Test " << q+1 << "---------------" << endl;
 
-        for (int i = 0; i < 9; i++) {
-            int n = 5000 + (2500 * i);
+        for (int i = 0; i < 10; i++) {
+            int n = 30000 + (5000 * i);
             int j = 0;
             bst<int> b;
             rbst<int> r;
+            vector<int> rdata;
+            random_device rd;
+            mt19937 generator(rd());
+            uniform_int_distribution<int> distribution(0, n);
+
+            for(int k = 0; k < n; k++) {
+                int rand = distribution(generator);
+                rdata.push_back(rand);
+            }
 
             cout << "Test size: " << n << endl;
 
             while (j < n) {
-                b.insert(j);
-                r.insert(j);
+                b.insert(rdata[j]);
+                r.insert(rdata[j]);
                 j++;
             }
 
@@ -161,10 +174,12 @@ void sample_max_sorted() {
         times_bst.push_back(sample_bst);
         times_rbst.push_back(sample_rbst);
     }
-    write_mean_time(times_bst, "samples/bst_max_sorted.csv");
-    write_mean_time(times_rbst, "samples/rbst_max_sorted.csv");
+    write_mean_time(times_bst, "samples/bst_max_random.csv");
+    write_mean_time(times_rbst, "samples/rbst_max_random.csv");
 }
 
 int main() {
-    sample_max_sorted();
+    // sample_insertion_random();
+    // sample_insertion_sorted();
+    sample_max_random();
 }
