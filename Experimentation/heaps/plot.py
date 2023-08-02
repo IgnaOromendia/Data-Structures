@@ -10,9 +10,6 @@ data_fib_min = pd.read_csv('samples/fibo_min.csv')
 data_pq_min = pd.read_csv('../samples_cpp/pqueue_min.csv')
 
 data_fib_wf = pd.read_csv('samples/fibo_min_wf.csv')
-data_pq_wf = pd.read_csv('../samples_cpp/pqueue_min_wf.csv')
-
-
 
 fig1 = plt.figure(figsize=(8, 6))
 
@@ -40,20 +37,8 @@ plt.grid(True)
 plt.legend()
 plt.show()
 
+
 fig3 = plt.figure(figsize=(8, 6))
-
-plt.plot(data_fib_wf['n'], data_fib_wf['time'], label='Fibonacci Heap', color='red', linewidth = 2)
-plt.scatter(data_fib_wf['n'], data_fib_wf['time'], color='red', linewidth = 2)
-plt.plot(data_pq_wf['n'], data_pq_wf['time'], label='C++ Heap', color='blue', linewidth = 2)
-plt.scatter(data_pq_wf['n'], data_pq_wf['time'], color='blue', linewidth = 2)
-plt.xlabel('Length')
-plt.ylabel('Time (milliseconds)')
-plt.title('Extract min without the first extract in Fibonacci Heap and C++ Heap')
-plt.grid(True)
-plt.legend()
-plt.show()
-
-fig4 = plt.figure(figsize=(8, 6))
 
 plt.plot(data_fib_wf['n'], data_fib_wf['time'], label='All extractions', color='red', linewidth = 2)
 plt.scatter(data_fib_wf['n'], data_fib_wf['time'], color='red', linewidth = 2)
