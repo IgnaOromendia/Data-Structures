@@ -12,20 +12,7 @@ const double INF = numeric_limits<double>::max();
 template<typename T>
 class fibonacci_heap {
 public:
-    friend class FH_handle;
-
-    class FH_handle {
-        friend class fibonacci_heap;
-    public:
-        FH_handle(): _p(nullptr) {};
-
-        pair<T,double> operator*() const {
-            if (p == nullptr) return make_pair(0,INF);
-            return make_pair(p->elem, p->prio);
-        }
-    private:
-        Node* p;
-    };
+    class FH_handle;
 
     fibonacci_heap();
 
@@ -53,27 +40,44 @@ private:
 
         Node* parent;
         Node* first_child;
-        Node* right;
         Node* left;
+        Node* right;
 
-        Node(const T& e, const double& p,) {
+        Node(const T& e, const double& p) {
             elem = e;
             prio = p;
             degree = 0;
             mark = false;
             parent = nullptr;
             first_child = nullptr;
-            rigth = this;
+            right = this;
             left = this;
         }
     };
 
     int _size;
+    int _size_root;
     Node* _min;
 
     void consolidate();
     void swap(Node*& x, Node*& y);
     void link(Node*& x, Node*& y);
+    void destroy(Node* n);
+};
+
+template<typename T>
+class fibonacci_heap<T>::FH_handle {
+public:
+    FH_handle(): p(nullptr) {};
+
+    FH_handle(fibonacci_heap<T>::Node* n): p(n) {};
+
+    pair<T,double> operator*() const {
+        if (p == nullptr) return make_pair(0,INF);
+        return make_pair(p->elem, p->prio);
+    }
+private:
+    typename fibonacci_heap<T>::Node* p;
 };
 
 #endif
