@@ -126,64 +126,7 @@ void sample_extract_min() {
     write_mean_time(times_pqueue, "../samples_cpp/pqueue_min.csv");
 }
 
-void sample_extract_min_without_first() {
-    cout << "Extract min without first" << endl;
-    for(int q = 0; q < 1; q++) {
-        vector<pair<int,long long> > sample_1;
-        vector<pair<int,long long> > sample_2;
-
-        cout << "--------------- Test " << q+1 << "---------------" << endl;
-
-        for(int i = 0; i < 10; i++) {
-            int j = 0;
-            int n = 200000 + (200000 * i);
-            fibonacci_heap<int> f;
-            priority_queue<int> pq;
-
-            cout << "Test size: " << n << endl;
-
-            while(j < n) {
-                f.insert(j,j);
-                j++;
-            }
-
-            f.extract_min();
-
-            j = 0;
-            auto start = chrono::high_resolution_clock::now();
-            while(j < n) {
-                f.extract_min();
-                j++;
-            }
-            auto stop = chrono::high_resolution_clock::now();
-            auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
-            sample_1.push_back(make_pair(n,duration.count())); 
-
-            j = 0;
-            while (j < n) {
-                pq.push(j);
-                j++;
-            }
-
-            j = 0;
-            start = chrono::high_resolution_clock::now();
-            while (j < n) {
-                pq.pop();
-                j++;
-            }
-            stop = chrono::high_resolution_clock::now();
-            duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
-            sample_2.push_back(make_pair(n,duration.count())); 
-        }
-        times_fibo.push_back(sample_1);
-        times_pqueue.push_back(sample_2);
-    }
-    write_mean_time(times_fibo, "samples/fibo_min_wf.csv");
-    write_mean_time(times_pqueue, "../samples_cpp/pqueue_min_wf.csv");
-}
-
 // Dijkstra
-
 typedef int vertex; 
 struct edge {
     vertex target;
@@ -221,7 +164,6 @@ void Dijkstra(const weighted_graph& G, vertex s, vector <double >& D, vector <ve
         } 
     }
 }
-
 
 void sample_dijkstra() {
 
