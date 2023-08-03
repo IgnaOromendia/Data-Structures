@@ -14,6 +14,8 @@ class fibonacci_heap {
 public:
     class FH_handle;
 
+    friend class FH_handle;
+
     fibonacci_heap();
 
     ~fibonacci_heap();
@@ -29,6 +31,8 @@ public:
     bool empty() const;
 
     int size() const;
+
+    int basic_operations() const;
 
 private:
 
@@ -58,16 +62,21 @@ private:
     int _size;
     int _size_root;
     Node* _min;
+    int _basic_operations;
 
     void consolidate();
-    void swap(Node*& x, Node*& y);
-    void link(Node*& x, Node*& y);
+    void swap(Node* x, Node* y);
+    void link(Node* x, Node* y);
     void destroy(Node* n);
+    void cut(Node* x, Node* y);
+    void cascade_cut(Node* y);
 };
 
 template<typename T>
 class fibonacci_heap<T>::FH_handle {
 public:
+    friend class fibonacci_heap<T>;
+
     FH_handle(): p(nullptr) {};
 
     FH_handle(fibonacci_heap<T>::Node* n): p(n) {};

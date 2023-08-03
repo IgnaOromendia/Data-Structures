@@ -172,6 +172,40 @@ void test_stress() {
     print_judge("Stress");
 }
 
+void test_decrease_key() {
+    fibonacci_heap<int> f;
+    fibonacci_heap<int>::FH_handle handle1;
+    fibonacci_heap<int>::FH_handle handle2;
+    fibonacci_heap<int>::FH_handle handle3;
+
+    f.insert(1,1);
+    handle1 = f.insert(21,21);
+    handle2 = f.insert(11,11);
+    f.insert(4,4);
+    handle3 = f.insert(7,7);
+    f.insert(5,5);
+
+    f.extract_min(); // Modifica el handler 3 why??
+
+    f.decrease_key(handle1,2);
+
+    handle1 = f.min();
+    if ((*handle1).second != 2 or (*handle2).first != 21) anwser = false;
+
+    f.extract_min();
+    f.decrease_key(handle2,2);
+
+    handle2 = f.min();
+    if ((*handle2).second != 2 or (*handle2).first != 11) anwser = false;
+
+    f.decrease_key(handle3,1); 
+
+    handle3 = f.min();
+    if ((*handle3).second != 1 or (*handle2).first != 7) anwser = false;
+
+    print_judge("Decrease key simple");
+}
+
 int main() {
     test_constructor();
     test_one_insert();
@@ -179,4 +213,5 @@ int main() {
     test_extract_min();
     test_extract_insert();
     test_stress();
+    test_decrease_key();
 }

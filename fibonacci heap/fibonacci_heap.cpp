@@ -1,7 +1,7 @@
 #include"fibonacci_heap.h"
 
 template <typename T>
-fibonacci_heap<T>::fibonacci_heap(): _size(0), _min(nullptr), _size_root(0) {}
+fibonacci_heap<T>::fibonacci_heap(): _size(0), _min(nullptr), _size_root(0), _basic_operations(0) {}
 
 template <typename T>
 fibonacci_heap<T>::~fibonacci_heap() {
@@ -22,6 +22,7 @@ typename fibonacci_heap<T>::FH_handle fibonacci_heap<T>::insert(const T &elem, c
         _min->left = node;
         if(node->prio < _min->prio) _min = node;
     }
+    _basic_operations++;
     _size_root++;
     _size++;
     return FH_handle(node);
@@ -52,6 +53,7 @@ void fibonacci_heap<T>::extract_min() {
             z->left = last_child;
             last_child->right = z; 
             _size_root += childs;
+            _basic_operations += childs;
         }
 
         _min = _min->right;
@@ -60,6 +62,7 @@ void fibonacci_heap<T>::extract_min() {
         z->right->left = z->left;
         z->left->right = z->right;
         _size_root--;
+        _basic_operations++;
 
         if (_size == 1) {
             _min = nullptr;
@@ -73,6 +76,15 @@ void fibonacci_heap<T>::extract_min() {
 
 template <typename T>
 void fibonacci_heap<T>::decrease_key(fibonacci_heap<T>::FH_handle h, const double &prio) {
+    Node* node = h.p;
+    Node* parent = node->parent;
+    if (prio > node->prio) {return;}
+    node->prio = prio;
+    if (parent != nullptr and node->prio < parent->prio) {
+        cut(node, parent);
+        cascade_cut(parent);
+    }
+    if (prio < _min->prio) _min = node;
 }
 
 template <typename T>
@@ -83,6 +95,11 @@ bool fibonacci_heap<T>::empty() const {
 template <typename T>
 int fibonacci_heap<T>::size() const {
     return _size;
+}
+
+template <typename T>
+int fibonacci_heap<T>::basic_operations() const {
+    return _basic_operations;
 }
 
 // AUXILIARS
@@ -101,6 +118,7 @@ void fibonacci_heap<T>::consolidate() {
             Node* y = A[d];
             if (x->prio > y->prio) swap(x,y);
             link(x,y);
+            _basic_operations++;
             A[d] = nullptr;
             d++;
         }
@@ -114,6 +132,7 @@ void fibonacci_heap<T>::consolidate() {
 
     for(int i = 0; i < rank; i++) {
         if(A[i] != nullptr) {
+            _basic_operations++;
             if (_min == nullptr) {
                 _size_root = 1;
                 _min = A[i];
@@ -135,7 +154,7 @@ void fibonacci_heap<T>::consolidate() {
 }
 
 template <typename T>
-void fibonacci_heap<T>::swap(Node *&x, Node *&y) {
+void fibonacci_heap<T>::swap(Node *x, Node *y) {
     T elem_temp = x->elem;
     double prio_temp = x->prio;
     Node* temp = x->first_child; 
@@ -148,7 +167,7 @@ void fibonacci_heap<T>::swap(Node *&x, Node *&y) {
 }
 
 template <typename T>
-void fibonacci_heap<T>::link(Node *&x, Node *&y) {
+void fibonacci_heap<T>::link(Node *x, Node *y) {
     y->mark = false;
     x->degree++;
     _size_root--;
@@ -178,5 +197,51 @@ void fibonacci_heap<T>::destroy(Node *n) {
         if(n->first_child != nullptr) destroy(n->first_child);
         delete n;
         n = nullptr;
+    }
+}
+
+template <typename T>
+void fibonacci_heap<T>::cut(Node* x, Node* y) {
+    // removing x from y's childs
+    if (x != x->right) {
+        if (y->first_child == x) y->first_child = x->right;
+        x->right->left = x->left;
+        x->left->right = x->right;
+    } else {
+        y->first_child = nullptr;
+        y->degree--;
+    }
+    x->parent = nullptr;
+    x->mark = false;
+
+    // Adding x to the root list
+    x->right = _min;
+    x->left = _min->left;
+    _min->left->right = x;
+    _min->left = x;
+    _size_root++;
+    _basic_operations += 2;
+}
+
+template <typename T>
+void fibonacci_heap<T>::cascade_cut(Node* y) {
+    Node* z = y->parent;
+    if (z != nullptr) {
+        Node* it = y;
+        int maxD = 0;
+
+        do {
+            if (it->degree > maxD) maxD = it->degree;
+            it = it->right;
+        } while(it != y);
+
+        z->degree = maxD + 1;
+
+        if (not y->mark) {
+            y->mark = true;
+        } else {
+            cut(y,z);
+            cascade_cut(z);
+        }
     }
 }
