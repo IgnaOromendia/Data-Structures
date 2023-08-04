@@ -13,3 +13,5 @@ randomized\ bst/tests
 randomized\ bst/tests.dSYM
 fibonacci\ heap/test
 fibonacci\ heap/test.dSYM
+trie/tests
+trie/tests.dSYM
