@@ -20,6 +20,8 @@ public:
 
     const int size() const;
 
+    const bool empty() const; 
+
     const T& min() const;
 
     const T& max() const;

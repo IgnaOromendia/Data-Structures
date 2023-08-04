@@ -49,6 +49,11 @@ const int rbst<T>::size() const {
 }
 
 template <typename T>
+const bool rbst<T>::empty() const{
+    return _size == 0;
+}
+
+template <typename T>
 const T& rbst<T>::min() const {
     Node* it = _root;
     while(it->left != nullptr) it = it->left;
