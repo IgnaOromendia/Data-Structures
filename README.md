@@ -10,6 +10,8 @@ If you find an issue please write to me.
   -  [Fibonacci Heap](fibonacci%20heap/)
 - Lists
   -  [Double Linked List](linked%20list/)
+- Trie
+  -  [Trie](trie/)
 - Experiments
   - [BST & RBST](Experimentation/rbst/img/)
   - [Double Linked List](Experimentation/linked_list/img/)
