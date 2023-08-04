@@ -25,6 +25,8 @@ public:
     const T& max() const;
 
     const int size() const;
+    
+    const bool empty() const;
 
 private:
 

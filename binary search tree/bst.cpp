@@ -68,6 +68,11 @@ const int bst<T>::size() const {
     return _size;
 }
 
+template <typename T>
+const bool bst<T>::empty() const {
+    return _size == 0;
+}
+
 // AUXILIARS
 
 template<class T>
