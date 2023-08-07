@@ -28,9 +28,9 @@ public:
 
     void decrease_key(FH_handle h, const double& prio);
 
-    bool empty() const;
+    const bool empty() const;
 
-    int size() const;
+    const int size() const;
 
     int basic_operations() const;
 
@@ -57,6 +57,17 @@ private:
             right = this;
             left = this;
         }
+
+        Node(Node* n) {
+            elem = n->elem;
+            prio = n->prio;
+            degree = n->degree;
+            mark = n->mark;
+            parent = n->parent;
+            first_child = n->first_child;
+            right = this;
+            left = this;
+        }
     };
 
     int _size;
@@ -65,7 +76,6 @@ private:
     int _basic_operations;
 
     void consolidate();
-    void swap(Node* x, Node* y);
     void link(Node* x, Node* y);
     void destroy(Node* n);
     void cut(Node* x, Node* y);

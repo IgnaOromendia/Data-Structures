@@ -60,17 +60,17 @@ void test_extract_min() {
     fibonacci_heap<int> f;
     vector<pair<int, double> > v;
 
-    v.push_back(make_pair(10,1.0));
-    v.push_back(make_pair(14, 2.0));
-    v.push_back(make_pair(5, 3.0));
-    v.push_back(make_pair(15, 4.0));
-    v.push_back(make_pair(28, 5.0));
+    v.push_back(make_pair(10,1));
+    v.push_back(make_pair(14, 2));
+    v.push_back(make_pair(5, 3));
+    v.push_back(make_pair(15, 4));
+    v.push_back(make_pair(28, 5));
 
-    f.insert(10,1.0);
-    f.insert(5,3.0);
-    f.insert(28,5.0);
-    f.insert(15,4.0);
-    f.insert(14,2.0);
+    f.insert(10,1);
+    f.insert(5,3);
+    f.insert(28,5);
+    f.insert(15,4);
+    f.insert(14,2);
 
     int i = 0;
 
@@ -126,10 +126,6 @@ void test_extract_insert() {
     print_judge("Extract min insert");
 }
 
-int key(int i) {
-	return total * ((i * i - 100 * i) % total) + i;
-}
-
 void test_stress() {
     bool anwser1 = true; // debugging
     fibonacci_heap<int> f;
@@ -138,7 +134,7 @@ void test_stress() {
     // Insert
     for (int i = 0; i < total; i++) {
 	    if (f.size() != i) anwser = false;
-	    f.insert(i,key(i));
+	    f.insert(i,i);
     }
     if (f.size() != total) anwser1 = false;
 
@@ -185,12 +181,12 @@ void test_decrease_key() {
     handle3 = f.insert(7,7);
     f.insert(5,5);
 
-    f.extract_min(); // Modifica el handler 3 why??
+    f.extract_min();
 
     f.decrease_key(handle1,2);
 
     handle1 = f.min();
-    if ((*handle1).second != 2 or (*handle2).first != 21) anwser = false;
+    if ((*handle1).second != 2 or (*handle1).first != 21) anwser = false;
 
     f.extract_min();
     f.decrease_key(handle2,2);
@@ -201,7 +197,7 @@ void test_decrease_key() {
     f.decrease_key(handle3,1); 
 
     handle3 = f.min();
-    if ((*handle3).second != 1 or (*handle2).first != 7) anwser = false;
+    if ((*handle3).second != 1 or (*handle3).first != 7) anwser = false;
 
     print_judge("Decrease key simple");
 }
@@ -212,6 +208,6 @@ int main() {
     test_some_insert();
     test_extract_min();
     test_extract_insert();
-    test_stress();
     test_decrease_key();
+    test_stress();
 }

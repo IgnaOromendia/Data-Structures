@@ -88,12 +88,12 @@ void fibonacci_heap<T>::decrease_key(fibonacci_heap<T>::FH_handle h, const doubl
 }
 
 template <typename T>
-bool fibonacci_heap<T>::empty() const {
+const bool fibonacci_heap<T>::empty() const {
     return _size == 0;
 }
 
 template <typename T>
-int fibonacci_heap<T>::size() const {
+const int fibonacci_heap<T>::size() const {
     return _size;
 }
 
@@ -108,16 +108,21 @@ template <typename T>
 void fibonacci_heap<T>::consolidate() {
     int rank = (1.44 * log2(_size)) + 1;
     vector<Node*> A(rank, nullptr);
-    Node* x = _min; // x is going to be my node iterator
+    Node* x = _min; // x is going to be my iterator node
     int j = 0;
     int size = _size_root;
     
+    // Joining by degree
     while (j < size) {
         int d = x->degree;
         while(A[d] != nullptr) {
             Node* y = A[d];
-            if (x->prio > y->prio) swap(x,y);
-            link(x,y);
+            if (x->prio > y->prio) {
+                link(y,x);
+                x = y;
+            } else {
+                link(x,y);
+            }
             _basic_operations++;
             A[d] = nullptr;
             d++;
@@ -130,6 +135,7 @@ void fibonacci_heap<T>::consolidate() {
     _min = nullptr;
     _size_root = 0;
 
+    // Joining degrees
     for(int i = 0; i < rank; i++) {
         if(A[i] != nullptr) {
             _basic_operations++;
@@ -149,25 +155,10 @@ void fibonacci_heap<T>::consolidate() {
             }
         }
     }
-    
-
 }
 
 template <typename T>
-void fibonacci_heap<T>::swap(Node *x, Node *y) {
-    T elem_temp = x->elem;
-    double prio_temp = x->prio;
-    Node* temp = x->first_child; 
-    x->elem = y->elem;
-    x->prio = y->prio;
-    x->first_child = y->first_child;
-    y->elem = elem_temp;
-    y->prio = prio_temp;
-    y->first_child = temp;
-}
-
-template <typename T>
-void fibonacci_heap<T>::link(Node *x, Node *y) {
+void fibonacci_heap<T>::link(Node* x, Node* y) {
     y->mark = false;
     x->degree++;
     _size_root--;
@@ -193,7 +184,7 @@ void fibonacci_heap<T>::link(Node *x, Node *y) {
 template <typename T>
 void fibonacci_heap<T>::destroy(Node *n) {
     while(n != nullptr) {
-        if(n != n->right and n != _min) destroy(n->right);
+        if(n != n->right and n->right != _min) destroy(n->right);
         if(n->first_child != nullptr) destroy(n->first_child);
         delete n;
         n = nullptr;
