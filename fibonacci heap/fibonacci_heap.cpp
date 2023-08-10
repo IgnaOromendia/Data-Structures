@@ -13,17 +13,12 @@ typename fibonacci_heap<T>::FH_handle fibonacci_heap<T>::insert(const T &elem, c
     Node* node = new Node(elem, prio);
     if (_min == nullptr) {
         _min = node;
+        _size_root = 1;
     } else {
-        // Adding node into the root list
-        // _min->left = last item in root list
-        node->right = _min;
-        node->left = _min->left;
-        _min->left->right = node;
-        _min->left = node;
+        add_to_root_list(node);
         if(node->prio < _min->prio) _min = node;
     }
     _basic_operations++;
-    _size_root++;
     _size++;
     return FH_handle(node);
 }
@@ -46,6 +41,7 @@ void fibonacci_heap<T>::extract_min() {
                 first_child = first_child->right;
                 childs++;
             }
+            z->first_child = nullptr;
             // Adding the childs to the root list 
             Node* last_child = first_child->left;
             first_child->left = z->left;
@@ -56,12 +52,7 @@ void fibonacci_heap<T>::extract_min() {
             _basic_operations += childs;
         }
 
-        _min = _min->right;
-
-        // Removing min from root list
-        z->right->left = z->left;
-        z->left->right = z->right;
-        _size_root--;
+       remove_from_root_list(z);
         _basic_operations++;
 
         if (_size == 1) {
@@ -71,6 +62,7 @@ void fibonacci_heap<T>::extract_min() {
         }
         _size--;
         delete z;
+        z = nullptr;
     }
 }
 
@@ -78,13 +70,13 @@ template <typename T>
 void fibonacci_heap<T>::decrease_key(fibonacci_heap<T>::FH_handle h, const double &prio) {
     Node* node = h.p;
     Node* parent = node->parent;
-    if (prio > node->prio) {return;}
+    if (prio > node->prio) return;
     node->prio = prio;
     if (parent != nullptr and node->prio < parent->prio) {
         cut(node, parent);
         cascade_cut(parent);
     }
-    if (prio < _min->prio) _min = node;
+    if (node->prio < _min->prio) _min = node;
 }
 
 template <typename T>
@@ -108,28 +100,28 @@ template <typename T>
 void fibonacci_heap<T>::consolidate() {
     int rank = (1.44 * log2(_size)) + 1;
     vector<Node*> A(rank, nullptr);
-    Node* x = _min; // x is going to be my iterator node
-    int j = 0;
+    vector<Node*> root_nodes;
     int size = _size_root;
-    
-    // Joining by degree
-    while (j < size) {
+
+    count_nodes(_min, root_nodes);
+
+    // Union by degree
+    for(int i = 0; i < root_nodes.size(); i++) {
+        Node* x = root_nodes[i];
         int d = x->degree;
         while(A[d] != nullptr) {
             Node* y = A[d];
             if (x->prio > y->prio) {
-                link(y,x);
+                link(y,x); // x become child of y
                 x = y;
             } else {
-                link(x,y);
+                link(x,y); // y become child of x
             }
             _basic_operations++;
             A[d] = nullptr;
             d++;
         }
         A[d] = x;
-        x = x->right;
-        j++;
     }
     
     _min = nullptr;
@@ -146,12 +138,8 @@ void fibonacci_heap<T>::consolidate() {
                 _min->left = _min;
             } else {
                 // Adding A[i] into the root list
-                A[i]->right = _min;
-                A[i]->left = _min->left;
-                _min->left->right = A[i];
-                _min->left = A[i];
+                add_to_root_list(A[i]);
                 if(A[i]->prio < _min->prio) _min = A[i];
-                _size_root++;
             }
         }
     }
@@ -161,24 +149,12 @@ template <typename T>
 void fibonacci_heap<T>::link(Node* x, Node* y) {
     y->mark = false;
     x->degree++;
-    _size_root--;
 
     // Removing from root list
-    y->left->right = y->right; 
-    y->right->left = y->left;
+    remove_from_root_list(y);
 
     // Adding y as a child of x
-    if (x->first_child != nullptr) {
-        y->right = x->first_child;
-        y->left = x->first_child->left;
-        x->first_child->left->right = y;
-        x->first_child->left = y;
-    } else {
-        y->right = y;
-        y->left = y;
-    }
-    x->first_child = y;
-    y->parent = x;
+    add_to_child_list(x,y);
 }
 
 template <typename T>
@@ -194,23 +170,11 @@ void fibonacci_heap<T>::destroy(Node *n) {
 template <typename T>
 void fibonacci_heap<T>::cut(Node* x, Node* y) {
     // removing x from y's childs
-    if (x != x->right) {
-        if (y->first_child == x) y->first_child = x->right;
-        x->right->left = x->left;
-        x->left->right = x->right;
-    } else {
-        y->first_child = nullptr;
-        y->degree--;
-    }
-    x->parent = nullptr;
+    remove_from_child_list(y,x);
     x->mark = false;
 
     // Adding x to the root list
-    x->right = _min;
-    x->left = _min->left;
-    _min->left->right = x;
-    _min->left = x;
-    _size_root++;
+    add_to_root_list(x);
     _basic_operations += 2;
 }
 
@@ -218,16 +182,6 @@ template <typename T>
 void fibonacci_heap<T>::cascade_cut(Node* y) {
     Node* z = y->parent;
     if (z != nullptr) {
-        Node* it = y;
-        int maxD = 0;
-
-        do {
-            if (it->degree > maxD) maxD = it->degree;
-            it = it->right;
-        } while(it != y);
-
-        z->degree = maxD + 1;
-
         if (not y->mark) {
             y->mark = true;
         } else {
@@ -235,4 +189,69 @@ void fibonacci_heap<T>::cascade_cut(Node* y) {
             cascade_cut(z);
         }
     }
+}
+
+template <typename T>
+void fibonacci_heap<T>::add_to_root_list(Node* x) {
+    x->right = _min;
+    x->left = _min->left;
+    _min->left->right = x;
+    _min->left = x;
+    _size_root++;
+}
+
+template <typename T>
+void fibonacci_heap<T>::add_to_child_list(Node *parent, Node *new_child) {
+    if (parent->first_child != nullptr) {
+        new_child->right = parent->first_child;
+        new_child->left = parent->first_child->left;
+        parent->first_child->left->right = new_child;
+        parent->first_child->left = new_child;
+    } else {
+        new_child->right = new_child;
+        new_child->left = new_child;
+    }
+    parent->first_child = new_child;
+    new_child->parent = parent;
+}
+
+template <typename T>
+void fibonacci_heap<T>::remove_from_root_list(Node *x) {
+    if (x == _min) _min = x->right;
+    x->right->left = x->left;
+    x->left->right = x->right;
+    _size_root--;
+}
+
+template <typename T>
+void fibonacci_heap<T>::remove_from_child_list(Node *parent, Node* child) {
+    if (child == child->right) {
+        parent->first_child = nullptr;
+        parent->degree = 0;
+    } else if (parent->first_child == child){
+        parent->first_child = child->right;
+    }
+
+    child->left->right = child->right;
+    child->right->left = child->left;
+    child->parent = nullptr;
+
+    if (parent->first_child != nullptr) {
+        Node* it = parent->first_child;
+        int max_degree = 0;
+        do {
+            if (it->degree > max_degree) max_degree = it->degree;
+            it = it->right;
+        } while(it != parent->first_child);
+        parent->degree = max_degree + 1;
+    }
+}
+
+template <typename T>
+void fibonacci_heap<T>::count_nodes(Node *n, vector<Node*>& v) {
+    Node* it = n;
+    do {
+        v.push_back(it);
+        it = it->right;
+    } while(it != n);
 }

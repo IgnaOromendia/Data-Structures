@@ -57,17 +57,6 @@ private:
             right = this;
             left = this;
         }
-
-        Node(Node* n) {
-            elem = n->elem;
-            prio = n->prio;
-            degree = n->degree;
-            mark = n->mark;
-            parent = n->parent;
-            first_child = n->first_child;
-            right = this;
-            left = this;
-        }
     };
 
     int _size;
@@ -75,11 +64,35 @@ private:
     Node* _min;
     int _basic_operations;
 
+    // Consolidate all the sub-trees
     void consolidate();
+
+    // Make y child of x
     void link(Node* x, Node* y);
+
+    // Remove all the nodes
     void destroy(Node* n);
+
+    // Cut x form y
     void cut(Node* x, Node* y);
+
+    // Recursive cut
     void cascade_cut(Node* y);
+
+    // Add a node to the root list
+    void add_to_root_list(Node* x);
+
+    // Add a new child to a node
+    void add_to_child_list(Node* parent, Node* new_child);
+
+    // Remove from root list
+    void remove_from_root_list(Node* x);
+    
+    // Remove from child list
+    void remove_from_child_list(Node* parent, Node* child);
+
+    // Count the nodes in its level
+    void count_nodes(Node* x, vector<Node*>& v);
 };
 
 template<typename T>

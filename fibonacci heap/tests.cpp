@@ -1,12 +1,11 @@
 #include"fibonacci_heap.cpp"
-
+#include<vector>
 #include<string>
 #include<iostream>
 
 string accepted = "accpeted";
 string wrong    = "wrong anwser";
 bool anwser     = true;
-int total       = 1000;
 
 void print_judge(string text) {
     string res = anwser ? accepted : wrong;
@@ -127,40 +126,47 @@ void test_extract_insert() {
 }
 
 void test_stress() {
+    int total = 1000;
     bool anwser1 = true; // debugging
     fibonacci_heap<int> f;
     fibonacci_heap<int>::FH_handle handle;
+    vector<fibonacci_heap<int>::FH_handle> handles(total+1);
 
     // Insert
-    for (int i = 0; i < total; i++) {
+    for (int i = 0; i <= total; i++) {
 	    if (f.size() != i) anwser = false;
-	    f.insert(i,i);
+	    handle = f.insert(i,i);
+        handles[i] = handle;
+        if ((*handle).first != i or (*handle).second != i) anwser1 = false;
     }
-    if (f.size() != total) anwser1 = false;
+    if (f.size() != total+1) anwser1 = false;
 
-    // Remove number for even i
-    for (int i = 0; i < total; i++) {
-	    if (i % 2 == 0) {
-	    	handle = f.min();
-            pair<int, double> data = *handle;
-	    	f.extract_min();
-            handle = f.min();
-            pair<int, double> new_data = *handle;
-            if (data.second > new_data.second) anwser1 = false;
-	    }
-    }
-    if (f.size() != total / 2) anwser1 = false;
+    f.extract_min();
 
-    // Remove number for odd i
-    for (int i = 0; i < total; i++) {
-	    if (i % 2 == 1) {
-	    	handle = f.min();
-            pair<int, double> data = *handle;
-	    	f.extract_min();
-            handle = f.min();
-            pair<int, double> new_data = *handle;
-            if (data.second > new_data.second) anwser1 = false;
-	    }
+    // Decrease key
+    for (int i = 0; i < (total / 2); i++) {
+        handle = handles[((total) / 2) + 1 + i];
+        pair<int, double> old_data = *handle;
+        f.decrease_key(handle, -1);
+	    handle = f.min();
+        pair<int, double> data = *handle;
+        if (old_data.first != data.first) anwser1 = false;
+        if (old_data.second < data.second) anwser1 = false;
+        f.extract_min();
+        handle = f.min();
+        pair<int, double> new_data = *handle;
+        if (data.first < new_data.first) anwser1 = false;
+        if (data.second > new_data.second) anwser1 = false;
+    }    
+
+    // Extract min
+    while(!f.empty()) {
+        handle = f.min();
+        pair<int, double> data = *handle;
+        f.extract_min();
+        handle = f.min();
+        pair<int, double> new_data = *handle;
+        if (data.second > new_data.second) anwser1 = false;
     }
     if (f.size() != 0) anwser1 = false;
 
