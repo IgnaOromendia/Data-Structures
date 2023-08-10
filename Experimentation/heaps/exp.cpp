@@ -6,8 +6,33 @@
 #include<string>
 #include<list>
 
+typedef int vertex; 
 vector<vector<pair<int,long long> > > times_fibo;
 vector<vector<pair<int,long long> > > times_pqueue;
+vector<vector<pair<int,long long> > > fibo_basic_op;
+int s;
+struct edge {
+    vertex target;
+    double weight; 
+};
+const vertex NULL_VERTEX = -1;
+typedef vector<list<edge> > weighted_graph;
+
+void readData(weighted_graph& edges, int n, string extension) {
+    ifstream inputFile;
+    string filename = "Graph instances/inputs/progressive_p/input_" + to_string(n) + extension;
+    inputFile.open(filename);
+    int i = 0;
+    while (i < n) {
+        int c;     // edge weight
+        int v, u;     // v->u
+        inputFile >> v >> u >> c;
+        if (i == 0) s = v;
+        edge e; e.target = u; e.weight = c;
+        edges[v].push_back(e);
+        i++;
+    }
+}
 
 void writeData(double d, int t, string filename) {
     ofstream outputFile;
@@ -127,19 +152,12 @@ void sample_extract_min() {
 }
 
 // Dijkstra
-typedef int vertex; 
-struct edge {
-    vertex target;
-    double weight; 
-};
-const vertex NULL_VERTEX = -1;
-typedef vector<list<edge> > weighted_graph;
 
-void Dijkstra(const weighted_graph& G, vertex s, vector <double >& D, vector <vertex >& path) {
+int Dijkstra_fib(const weighted_graph& G, vertex s, vector <double >& D, vector <vertex >& path) {
     vector<fibonacci_heap<int>::FH_handle> FH_handles(G.size()); 
     fibonacci_heap<int> cand;
 
-    for (vertex u = 0; u < G.size(); ++u) { 
+    for (vertex u = 0; u < G.size(); u++) { 
         D[u] = INFINITY; path[u] = NULL_VERTEX; 
         FH_handles[u] = cand.insert(u, INFINITY);
     }
@@ -148,10 +166,13 @@ void Dijkstra(const weighted_graph& G, vertex s, vector <double >& D, vector <ve
     D[s] = 0; path[s] = s;
 
     while (not cand.empty()) {
-        fibonacci_heap<int>::FH_handle hu = cand.min(); 
-        pair<int, double> data = *hu;
+        pair<int, double> data = *(cand.min());
         vertex u = data.first;
         D[u] = data.second; 
+        cand.extract_min();
+        if (cand.size() == 1623) {
+            int a =0;
+        }
 
         for (edge e : G[u]) {
             vertex v = e.target;
@@ -163,12 +184,41 @@ void Dijkstra(const weighted_graph& G, vertex s, vector <double >& D, vector <ve
             }
         } 
     }
+    return cand.basic_operations();
 }
 
-void sample_dijkstra() {
+const string divN = "_p_1divN";
+const string logNdivN = "_p_logNdivN";
 
+void sample_dijkstra() {
+    for(int q = 0; q < 5; q++) {
+        cout << "--------------- Test suite " << q+1 << "---------------" << endl;
+        vector<pair<int,long long> > sample_1;
+        vector<pair<int,long long> > sample_bo;
+        for(int i = 0; i < 5; i++) {
+            int n = 2000 + (i * 2000);
+            int basic_op = 0;
+            vector<double> dist(n+1, INFINITY);
+            vector<vertex> path(n+1, -1);
+            weighted_graph edges(n+1, list<edge>());
+            readData(edges, n, "_p_4");
+
+            cout << "Test case " << q+1  << endl;
+            
+            auto start = chrono::high_resolution_clock::now();
+            basic_op = Dijkstra_fib(edges, s, dist, path);
+            auto stop = chrono::high_resolution_clock::now();
+            auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+            sample_1.push_back(make_pair(n,duration.count()));
+            sample_bo.push_back(make_pair(n,basic_op));
+        }
+        times_fibo.push_back(sample_1);
+        fibo_basic_op.push_back(sample_bo);
+    }
+    write_mean_time(times_fibo,"samples/dijkstra_p=0_9.csv");
+    write_mean_time(fibo_basic_op,"samples/bo_dijkstra_p=0_9.csv");
 }
 
 int main() {
-    
+    sample_dijkstra();
 }
