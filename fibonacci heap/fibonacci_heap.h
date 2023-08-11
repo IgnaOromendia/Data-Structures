@@ -60,7 +60,6 @@ private:
     };
 
     int _size;
-    int _size_root;
     Node* _min;
     int _basic_operations;
 

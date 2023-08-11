@@ -1,7 +1,7 @@
 #include"fibonacci_heap.h"
 
 template <typename T>
-fibonacci_heap<T>::fibonacci_heap(): _size(0), _min(nullptr), _size_root(0), _basic_operations(0) {}
+fibonacci_heap<T>::fibonacci_heap(): _size(0), _min(nullptr), _basic_operations(0) {}
 
 template <typename T>
 fibonacci_heap<T>::~fibonacci_heap() {
@@ -13,7 +13,6 @@ typename fibonacci_heap<T>::FH_handle fibonacci_heap<T>::insert(const T &elem, c
     Node* node = new Node(elem, prio);
     if (_min == nullptr) {
         _min = node;
-        _size_root = 1;
     } else {
         add_to_root_list(node);
         if(node->prio < _min->prio) _min = node;
@@ -48,7 +47,6 @@ void fibonacci_heap<T>::extract_min() {
             z->left->right = first_child;
             z->left = last_child;
             last_child->right = z; 
-            _size_root += childs;
             _basic_operations += childs;
         }
 
@@ -101,7 +99,6 @@ void fibonacci_heap<T>::consolidate() {
     int rank = (1.44 * log2(_size)) + 1;
     vector<Node*> A(rank, nullptr);
     vector<Node*> root_nodes;
-    int size = _size_root;
 
     count_nodes(_min, root_nodes);
 
@@ -125,14 +122,12 @@ void fibonacci_heap<T>::consolidate() {
     }
     
     _min = nullptr;
-    _size_root = 0;
 
     // Joining degrees
     for(int i = 0; i < rank; i++) {
         if(A[i] != nullptr) {
             _basic_operations++;
             if (_min == nullptr) {
-                _size_root = 1;
                 _min = A[i];
                 _min->right = _min;
                 _min->left = _min;
@@ -197,7 +192,6 @@ void fibonacci_heap<T>::add_to_root_list(Node* x) {
     x->left = _min->left;
     _min->left->right = x;
     _min->left = x;
-    _size_root++;
 }
 
 template <typename T>
@@ -220,7 +214,6 @@ void fibonacci_heap<T>::remove_from_root_list(Node *x) {
     if (x == _min) _min = x->right;
     x->right->left = x->left;
     x->left->right = x->right;
-    _size_root--;
 }
 
 template <typename T>
