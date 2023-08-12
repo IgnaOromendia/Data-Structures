@@ -2,23 +2,23 @@
 #include<cmath>
 
 template <typename T>
-list<T>::Node::Node(const T& elem): value(elem), next(nullptr), prev(nullptr) {};
+sortedList<T>::Node::Node(const T& elem): value(elem), next(nullptr), prev(nullptr) {};
 
 template <typename T>
-list<T>::list(): _first(nullptr), _last(nullptr), _length(0) {};
+sortedList<T>::sortedList(): _first(nullptr), _last(nullptr), _length(0) {};
 
 template <typename T>
-list<T>::list(const list<T> &l){
+sortedList<T>::sortedList(const sortedList<T> &l){
     *this = l;
 };
 
 template <typename T>
-list<T>::~list(){
+sortedList<T>::~sortedList(){
     delete_all();
 };
 
 template <typename T>
-list<T>& list<T>::operator=(const list<T> &to_copy){
+sortedList<T>& sortedList<T>::operator=(const sortedList<T> &to_copy){
     this->_length = 0;
     for(int i = 0; i < to_copy.length(); i++) {
         T elem = to_copy[i];
@@ -29,7 +29,7 @@ list<T>& list<T>::operator=(const list<T> &to_copy){
 }
 
 template <typename T>
-const T &list<T>::operator[](int i) const{
+const T &sortedList<T>::operator[](int i) const{
     Node* it = _first;
     if (i < _length) {
         if (i > _length / 2) {
@@ -47,7 +47,7 @@ const T &list<T>::operator[](int i) const{
 };
 
 template <typename T>
-void list<T>::insert(const T &elem){
+void sortedList<T>::insert(const T &elem){
     Node* new_node = new Node(elem);
     if (_length == 0) {
         _first = new_node;
@@ -72,7 +72,7 @@ void list<T>::insert(const T &elem){
 };
 
 template <typename T>
-void list<T>::remove(T elem){
+void sortedList<T>::remove(T elem){
     Node* it = _first;
     while(it->value != elem) it = it->next;
     // Try to improve this remove
@@ -83,19 +83,19 @@ void list<T>::remove(T elem){
 }
 
 template <typename T>
-int list<T>::length() const {
+int sortedList<T>::length() const {
     return _length;
 }
 
 template <typename T>
-void list<T>::merge(const list<T>& l){
+void sortedList<T>::merge(const sortedList<T>& l){
     for(int i = 0; i < l._length; i++) {
         push_back(l[i]);
     }
 };
 
 template <typename T>
-void list<T>::print(ostream &os) {
+void sortedList<T>::print(ostream &os) {
     Node* it = _first;
     os << "[";
     while (it != nullptr) {
@@ -112,7 +112,7 @@ void list<T>::print(ostream &os) {
 // AUXILIARS
 
 template <typename T>
-void list<T>::delete_all() {
+void sortedList<T>::delete_all() {
     while(_first != nullptr) {
         Node* f = _first;
         _first->prev = nullptr;

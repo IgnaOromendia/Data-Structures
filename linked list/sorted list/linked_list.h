@@ -6,16 +6,16 @@
 using namespace std;
 
 template<typename T>
-class list {
+class sortedList {
 public:
 
-    list();
+    sortedList();
 
-    list(const list<T>& l);
+    sortedList(const sortedList<T>& l);
 
-    ~list();
+    ~sortedList();
 
-    list<T>& operator=(const list<T>& to_copy);
+    sortedList<T>& operator=(const sortedList<T>& to_copy);
 
     const T& operator[](int i) const;
 
@@ -25,11 +25,11 @@ public:
 
     int length() const;
 
-    void merge(const list<T>& l);
+    void merge(const sortedList<T>& l);
 
     void print(ostream& os);
 
-    friend ostream& operator<<(ostream& os, list<T>& l) {
+    friend ostream& operator<<(ostream& os, sortedList<T>& l) {
         l.print(os);
         return os;
     }
