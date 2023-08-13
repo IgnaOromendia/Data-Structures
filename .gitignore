@@ -17,5 +17,5 @@ fibonacci\ heap/tests
 fibonacci\ heap/tests.dSYM
 trie/tests
 trie/tests.dSYM
-skip_list/tests
-skip_list/tests.dSYM
+skip list/tests
+skip list/tests.dSYM
