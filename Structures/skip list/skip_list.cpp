@@ -1,7 +1,7 @@
 #include "skip_list.h"
 
 template <typename T>
-skipList<T>::skipList(const float& p, const int& max_level): _p(p), _height(1), _size(0), _max_level(max_level) {
+skipList<T>::skipList(const double& p, const int& max_level): _p(p), _height(0), _size(0), _max_level(max_level) {
     _header = new Node(-1, max_level);
 }
 
@@ -23,11 +23,13 @@ bool skipList<T>::contains(const T &elem) const {
 
     return p->next[0] != nullptr and elem == p->next[0]->value;
 }
+
 template <typename T>
 void skipList<T>::insert(const T &elem){
     Node* p = _header; int l = _height;
-    Node** pred = new Node*[_height];
-    for(int i = 0; i < _height; i++) pred[i] = _header;
+    Node** pred = new Node*[_max_level+1];
+    for(int i = 0; i <= _max_level; i++) 
+        pred[i] = _header;
 
     // Searching for place
     while (l > 0) {
@@ -41,14 +43,14 @@ void skipList<T>::insert(const T &elem){
 
     // Adding levels
     int h = 1;
-    while(uniform_number() > 1 and h < _max_level) h++;
+    while(uniform_number() < _p and h < _max_level) h++;
 
     if(h > _height) _height = h;
 
     // Inserting
     Node* new_node = new Node(elem,h);
 
-    for(int i = 0; i < h; i++) {
+    for(int i = 0; i <= h; i++) {
         new_node->next[i] = pred[i]->next[i];
         pred[i]->next[i] = new_node;
     }
@@ -74,6 +76,19 @@ bool skipList<T>::empty() const {
 template <typename T>
 void skipList<T>::size() const {
     return _size;
+}
+
+template <typename T>
+void skipList<T>::print(ostream &os) {
+    for(int i = 0; i < _height; i++) {
+        cout << "Lvl " << i << ": ";
+        Node* node = _header->next[i]; 
+        while(node != nullptr) {
+            cout << node->value << " ";
+            node = node->next[i];
+        }
+        cout << "\n";
+    }
 }
 
 // AUXILIARS
