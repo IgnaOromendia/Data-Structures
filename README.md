@@ -4,8 +4,8 @@ If you find an issue please write to me.
 
 ### Index:
 - Trees
-  -  [Binary Search Tree](./Structures/binary%20search%20tree/)
-  -  [Randomized Binary Search Tree](./Structures/randomized%20bst/)
+  -  [Binary Search Tree](./Structures/trees/binary%20search%20tree/bst.h)
+  -  [Randomized Binary Search Tree](./Structures/trees/randomized%20bst/rbst.h)
 - Heaps
   -  [Fibonacci Heap](./Structures/fibonacci%20heap/)
 - Lists
